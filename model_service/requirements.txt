@@ -1,0 +1,16 @@
+# Web framework & server
+fastapi==0.115.6
+uvicorn[standard]==0.32.1
+python-multipart==0.0.18
+
+# Image handling (uploaded files → PIL → tensor)
+Pillow==11.0.0
+
+# Model loading & inference (versions match trained model)
+mlflow==3.1.4
+torch==2.8.0
+torchvision==0.23.0
+
+# MLflow / PyTorch dependencies
+numpy==2.0.2
+cloudpickle==3.1.2

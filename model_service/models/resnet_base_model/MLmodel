@@ -1,0 +1,23 @@
+artifact_path: /nfs/u50/moucattv/CXDD_model/mlruns/1/models/m-341e1b954dda4454bbae292e04fba9e1/artifacts
+flavors:
+  python_function:
+    config:
+      device: null
+    data: data
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.pytorch
+    pickle_module_name: mlflow.pytorch.pickle_module
+    python_version: 3.9.25
+  pytorch:
+    code: null
+    model_data: data
+    pytorch_version: 2.8.0+cu128
+mlflow_version: 3.1.4
+model_id: m-341e1b954dda4454bbae292e04fba9e1
+model_size_bytes: 99098111
+model_uuid: m-341e1b954dda4454bbae292e04fba9e1
+prompts: null
+run_id: 38bac1c5673f45ed9359764f3d14ce5f
+utc_time_created: '2026-03-14 18:05:42.393060'

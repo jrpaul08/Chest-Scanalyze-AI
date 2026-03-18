@@ -1,0 +1,118 @@
+import { useState, useEffect } from 'react'
+
+const API_URL = 'http://localhost:3000'
+
+export function useUploadPage() {
+  const [file, setFile] = useState(null)
+  const [previewUrl, setPreviewUrl] = useState(null)
+  const [isDragging, setIsDragging] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const [result, setResult] = useState(null)
+
+  // Create preview URL when file changes; revoke on cleanup
+  useEffect(() => {
+    if (file) {
+      const url = URL.createObjectURL(file)
+      setPreviewUrl(url)
+      return () => URL.revokeObjectURL(url)
+    }
+    setPreviewUrl(null)
+  }, [file])
+
+  const setFileAndClear = (selected) => {
+    if (selected && selected.type.startsWith('image/')) {
+      setFile(selected)
+      setError(null)
+      setResult(null)
+    } else if (selected) {
+      setError('Please select an image file (JPEG, PNG, etc.)')
+    }
+  }
+
+  const handleFileChange = (e) => {
+    const selected = e.target.files?.[0]
+    setFileAndClear(selected)
+  }
+
+  const handleDrop = (e) => {
+    e.preventDefault()
+    setIsDragging(false)
+    const dropped = e.dataTransfer.files?.[0]
+    setFileAndClear(dropped)
+  }
+
+  const handleDragOver = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+  }
+
+  const handleDragEnter = (e) => {
+    e.preventDefault()
+    setIsDragging(true)
+  }
+
+  const handleDragLeave = (e) => {
+    e.preventDefault()
+    setIsDragging(false)
+  }
+
+  const handlePredict = async () => {
+    if (!file) {
+      setError('Please select an image first')
+      return
+    }
+
+    setIsLoading(true)
+    setError(null)
+    setResult(null)
+
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const token = localStorage.getItem('token')
+      const response = await fetch(`${API_URL}/api/predict`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Prediction failed')
+      }
+
+      setResult(data)
+    } catch (err) {
+      setError(err.message || 'Something went wrong')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const reset = () => {
+    setFile(null)
+    setError(null)
+    setResult(null)
+  }
+
+  return {
+    file,
+    previewUrl,
+    isDragging,
+    isLoading,
+    error,
+    result,
+    handleFileChange,
+    handleDrop,
+    handleDragOver,
+    handleDragEnter,
+    handleDragLeave,
+    handlePredict,
+    reset,
+  }
+}

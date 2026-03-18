@@ -1,7 +1,13 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowLeftIcon } from '@heroicons/react/24/solid'
+import { ArrowLeftIcon, ExclamationTriangleIcon } from '@heroicons/react/24/solid'
 import { useUploadPage } from '../pageLogic/UploadPageLogic'
+
+const DISEASE_LABELS = [
+  'Atelectasis', 'Cardiomegaly', 'Consolidation', 'Edema', 'Effusion',
+  'Emphysema', 'Fibrosis', 'Hernia', 'Infiltration', 'Mass', 'Nodule',
+  'Pleural_Thickening', 'Pneumonia', 'Pneumothorax',
+]
 
 export const UploadPage = () => {
   const {
@@ -91,7 +97,58 @@ export const UploadPage = () => {
           </button>
 
           {result && (
-            <p className="mt-4 text-sm text-emerald-600 font-medium">Analysis complete.</p>
+            <div className="mt-8 pt-6 border-t border-slate-200">
+              {/* Summary verdict */}
+              <div className="mb-6 p-4 rounded-xl bg-slate-50 border border-slate-200">
+                <h3 className="font-semibold text-slate-800">
+                  Result: {result.binary_predictions?.some(Boolean)
+                    ? `${result.binary_predictions.filter(Boolean).length} condition(s) detected`
+                    : 'No conditions detected'}
+                </h3>
+                <p className="mt-2 text-sm text-slate-600">
+                  {result.binary_predictions?.some(Boolean)
+                    ? 'The following conditions were found based on our predictions:'
+                    : 'None of the 14 screened conditions were found based on our predictions.'}
+                </p>
+                {result.binary_predictions?.some(Boolean) && (
+                  <ul className="mt-2 text-sm text-amber-700 font-medium">
+                    {(result.binary_predictions || [])
+                      .map((b, i) => (b ? DISEASE_LABELS[i] : null))
+                      .filter(Boolean)
+                      .map((label) => (
+                        <li key={label}>• {label}</li>
+                      ))}
+                  </ul>
+                )}
+              </div>
+
+              <h3 className="text-lg font-semibold text-slate-800 mb-4">Analysis Results</h3>
+              <div className="space-y-2">
+                {(result.probabilities || []).map((prob, i) => {
+                  const label = DISEASE_LABELS[i] || `Class ${i}`
+                  const isPositive = result.binary_predictions?.[i] === 1
+                  const pct = (prob * 100).toFixed(1)
+                  return (
+                    <div
+                      key={i}
+                      className={`flex items-center justify-between py-2 px-3 rounded-lg ${
+                        isPositive ? 'bg-amber-50' : 'bg-slate-50'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        {isPositive && (
+                          <ExclamationTriangleIcon className="w-5 h-5 text-amber-600" />
+                        )}
+                        <span className="font-medium text-slate-800">{label}</span>
+                      </div>
+                      <span className={`text-sm font-medium ${isPositive ? 'text-amber-700' : 'text-slate-600'}`}>
+                        {pct}%
+                      </span>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
           )}
         </div>
       </div>

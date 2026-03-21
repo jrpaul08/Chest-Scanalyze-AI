@@ -21,8 +21,13 @@ app = FastAPI(
 # Model loaded once at startup, reused for all requests
 model = None
 
-# Configurable for model changes (classes, threshold, etc.)
+# Configurable for model changes — update these when retraining
 PREDICTION_THRESHOLD = 0.3
+DISEASE_LABELS = [
+    "Atelectasis", "Cardiomegaly", "Effusion", "Infiltration", "Mass", "Nodule",
+    "Pneumonia", "Pneumothorax", "Consolidation", "Edema", "Emphysema",
+    "Fibrosis", "Pleural_Thickening", "Hernia",
+]
 
 
 @app.on_event("startup")
@@ -73,12 +78,19 @@ async def predict(file: UploadFile = File(...)):
     # 4. Logits → probabilities via sigmoid (matches BCEWithLogitsLoss)
     probs = torch.sigmoid(logits).cpu().numpy().flatten().tolist()
 
-    # 5. Binary predictions at threshold (adapts to any number of classes)
-    binary = [1 if p >= PREDICTION_THRESHOLD else 0 for p in probs]
+    # 5. Map to class labels (fallback to class_N if model has more classes than labels)
+    def get_label(i: int) -> str:
+        return DISEASE_LABELS[i] if i < len(DISEASE_LABELS) else f"class_{i}"
+
+    predictions = {get_label(i): round(p, 6) for i, p in enumerate(probs)}
+    binary_predictions = {
+        get_label(i): 1 if p >= PREDICTION_THRESHOLD else 0
+        for i, p in enumerate(probs)
+    }
 
     return {
-        "probabilities": probs,
-        "binary_predictions": binary,
+        "predictions": predictions,
+        "binary_predictions": binary_predictions,
         "num_classes": len(probs),
     }
 

@@ -1,7 +1,8 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowLeftIcon, ExclamationTriangleIcon } from '@heroicons/react/24/solid'
+import { ArrowLeftIcon } from '@heroicons/react/24/solid'
 import { useUploadPage } from '../pageLogic/UploadPageLogic'
+import { DiagnosticReport } from '../components/DiagnosticReport'
 
 export const UploadPage = () => {
   const {
@@ -90,60 +91,9 @@ export const UploadPage = () => {
             {isLoading ? 'Analyzing...' : 'Predict'}
           </button>
 
-          {result?.predictions && (
+          {result?.report && (
             <div className="mt-8 pt-6 border-t border-slate-200">
-              {/* Summary verdict */}
-              {(() => {
-                const binary = result.binary_predictions || {}
-                const detected = Object.entries(binary).filter(([, v]) => v === 1).map(([label]) => label)
-              return (
-              <div className="mb-6 p-4 rounded-xl bg-slate-50 border border-slate-200">
-                <h3 className="font-semibold text-slate-800">
-                  Result: {detected.length > 0
-                    ? `${detected.length} condition(s) detected`
-                    : 'No conditions detected'}
-                </h3>
-                <p className="mt-2 text-sm text-slate-600">
-                  {detected.length > 0
-                    ? 'The following conditions were found based on our predictions:'
-                    : `None of the ${Object.keys(result.predictions).length} screened conditions were found based on our predictions.`}
-                </p>
-                {detected.length > 0 && (
-                  <ul className="mt-2 text-sm text-amber-700 font-medium">
-                    {detected.map((label) => (
-                      <li key={label}>• {label}</li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-              );
-              })()}
-
-              <h3 className="text-lg font-semibold text-slate-800 mb-4">Analysis Results</h3>
-              <div className="space-y-2">
-                {Object.entries(result.predictions).map(([label, prob]) => {
-                  const isPositive = result.binary_predictions?.[label] === 1
-                  const pct = (prob * 100).toFixed(1)
-                  return (
-                    <div
-                      key={label}
-                      className={`flex items-center justify-between py-2 px-3 rounded-lg ${
-                        isPositive ? 'bg-amber-50' : 'bg-slate-50'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2">
-                        {isPositive && (
-                          <ExclamationTriangleIcon className="w-5 h-5 text-amber-600" />
-                        )}
-                        <span className="font-medium text-slate-800">{label}</span>
-                      </div>
-                      <span className={`text-sm font-medium ${isPositive ? 'text-amber-700' : 'text-slate-600'}`}>
-                        {pct}%
-                      </span>
-                    </div>
-                  )
-                })}
-              </div>
+              <DiagnosticReport report={result.report} />
             </div>
           )}
         </div>

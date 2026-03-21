@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
-import notesRoutes from "./routes/notesRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import predictRoutes from "./routes/predictRoutes.js";
 import { connectDB } from "./config/db.js";
 import dotenv from "dotenv";
 
@@ -22,6 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/predict", predictRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

@@ -1,9 +1,13 @@
 /**
  * Predict controller - proxies image upload to the model service.
+ * Generates user-facing diagnostic report from raw predictions.
  * Requires authentication.
  */
 
+import { generateReport } from '../services/reportGenerator.js';
+
 const MODEL_SERVICE_URL = process.env.MODEL_SERVICE_URL || 'http://localhost:8000';
+const REPORT_THRESHOLD = parseFloat(process.env.REPORT_THRESHOLD) || undefined;
 
 export const predict = async (req, res) => {
   try {
@@ -35,9 +39,13 @@ export const predict = async (req, res) => {
       });
     }
 
+    const report = generateReport(data.predictions, {
+      threshold: REPORT_THRESHOLD,
+    });
+
     res.json({
       success: true,
-      ...data,
+      report,
     });
   } catch (error) {
     console.error('Predict proxy error:', error);

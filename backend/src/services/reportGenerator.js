@@ -8,7 +8,9 @@ import {
   LIKELIHOOD_THRESHOLDS,
 } from '../config/conditionsConfig.js'
 
-const DEFAULT_THRESHOLD = parseFloat(process.env.REPORT_THRESHOLD) || 0.35
+const DEFAULT_THRESHOLD = Number(process.env.REPORT_THRESHOLD) || 0.35
+const RECOMMENDATION_SUFFIX =
+  'Correlation with symptoms and clinical evaluation is recommended.'
 
 /**
  * Get human-readable likelihood label from probability.
@@ -32,35 +34,25 @@ function formatLabel(label) {
  */
 function generateAssessmentSummary(findings) {
   if (findings.length === 0) {
-    return (
-      'No significant findings were detected above the screening threshold. ' +
-      'Correlation with symptoms and clinical evaluation is recommended.'
-    )
+    return `No significant findings were detected above the screening threshold. ${RECOMMENDATION_SUFFIX}`
   }
 
   const primary = findings[0]
   const primaryName = formatLabel(primary.label)
 
   if (findings.length === 1) {
-    return (
-      `The results suggest ${primaryName.toLowerCase()}. ` +
-      'Correlation with symptoms and clinical evaluation is recommended.'
-    )
+    return `The results suggest ${primaryName.toLowerCase()}. ${RECOMMENDATION_SUFFIX}`
   }
 
   const secondary = findings[1]
   const secondaryName = formatLabel(secondary.label).toLowerCase()
-
-  return (
-    `The results suggest ${primaryName.toLowerCase()}, with additional signs that may indicate ${secondaryName}. ` +
-    'Correlation with symptoms and clinical evaluation is recommended.'
-  )
+  return `The results suggest ${primaryName.toLowerCase()}, with additional signs that may indicate ${secondaryName}. ${RECOMMENDATION_SUFFIX}`
 }
 
 /**
- * Generate unique study ID for the report.
+ * Generate unique report ID for the report.
  */
-function generateStudyId() {
+function generateReportId() {
   const now = new Date()
   const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '')
   const timeStr = now.toTimeString().slice(0, 8).replace(/:/g, '')
@@ -109,7 +101,7 @@ export function generateReport(predictions, options = {}) {
   const assessmentSummary = generateAssessmentSummary(findings)
 
   return {
-    title: 'Chest X-Ray Analysis Report',
+    title: 'Chest X-Ray Diagnostic Report',
     date: now.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
@@ -119,7 +111,7 @@ export function generateReport(predictions, options = {}) {
       hour: 'numeric',
       minute: '2-digit',
     }),
-    studyId: generateStudyId(),
+    reportId: generateReportId(),
     assessmentSummary,
     findings,
     potentialSymptoms,

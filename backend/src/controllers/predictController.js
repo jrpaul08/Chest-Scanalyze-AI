@@ -7,7 +7,12 @@
 import { generateReport } from '../services/reportGenerator.js';
 
 const MODEL_SERVICE_URL = process.env.MODEL_SERVICE_URL || 'http://localhost:8000';
-const REPORT_THRESHOLD = parseFloat(process.env.REPORT_THRESHOLD) || undefined;
+
+function getReportThreshold() {
+  const val = process.env.REPORT_THRESHOLD?.trim();
+  const parsed = parseFloat(val);
+  return Number.isNaN(parsed) ? undefined : parsed;
+}
 
 export const predict = async (req, res) => {
   try {
@@ -40,8 +45,11 @@ export const predict = async (req, res) => {
     }
 
     const report = generateReport(data.predictions, {
-      threshold: REPORT_THRESHOLD,
+      threshold: getReportThreshold(),
     });
+
+    console.log('[Predict] Raw predictions:', data.predictions);
+    console.log('[Predict] Report findings:', report.findings?.map((f) => `${f.displayName} (${f.confidencePct}%)`));
 
     res.json({
       success: true,

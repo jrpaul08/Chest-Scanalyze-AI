@@ -24,7 +24,7 @@ export const UploadPage = () => {
     <div className="min-h-screen bg-white">
       {/* Top banner */}
       <div className="bg-slate-900 text-white py-10">
-        <div className="max-w-3xl mx-auto px-6">
+        <div className="max-w-4xl mx-auto px-6">
           <Link
             to="/home"
             className="inline-flex items-center gap-2 text-blue-200 hover:text-white mb-4"
@@ -38,7 +38,7 @@ export const UploadPage = () => {
       </div>
 
       {/* Upload area */}
-      <div className="max-w-3xl mx-auto px-6 py-10">
+      <div className="max-w-4xl mx-auto px-6 py-10">
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
           <label
             className={`block mt-2 border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors ${
@@ -88,7 +88,7 @@ export const UploadPage = () => {
                 : 'bg-blue-600 text-white hover:bg-blue-700'
             }`}
           >
-            {isLoading ? 'Analyzing...' : 'Predict'}
+            {isLoading ? 'Analyzing...' : 'Generate Results'}
           </button>
 
           {result?.report && (

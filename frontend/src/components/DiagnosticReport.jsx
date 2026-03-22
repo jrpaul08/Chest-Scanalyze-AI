@@ -3,12 +3,16 @@
  * Designed for readability and a medical-report feel for end users.
  */
 
+const SECTION_HEADER =
+  'text-sm font-semibold uppercase tracking-wide text-[#1e40af] mb-2'
+const TABLE_HEADER = 'px-4 py-3 text-left text-xs font-semibold text-[#1e40af] uppercase tracking-wider'
+
 export const DiagnosticReport = ({ report }) => {
   const {
     title,
     date,
     time,
-    studyId,
+    reportId,
     assessmentSummary,
     findings,
     potentialSymptoms,
@@ -17,50 +21,62 @@ export const DiagnosticReport = ({ report }) => {
   } = report
 
   return (
-    <article className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-      {/* Header */}
-      <header className="bg-slate-50 border-b border-slate-200 px-6 py-5">
-        <h2 className="text-xl font-bold text-slate-900">{title}</h2>
-        <p className="mt-1 text-sm text-slate-600">
+    <article className="bg-white max-w-4xl w-full border border-slate-200/80 py-8">
+      {/* Report header - document-style */}
+      <header className="px-8 pb-6 border-b border-slate-200">
+        <h2 className="text-lg font-semibold text-[#1e40af] tracking-tight">
+          {title}
+        </h2>
+        <p className="mt-2 text-sm text-slate-600">
           {date} — {time}
-          {studyId && (
-            <span className="ml-2 text-slate-500">• Study ID: {studyId}</span>
-          )}
         </p>
+        {reportId && (
+          <p className="mt-1 text-sm text-slate-500">Report ID: {reportId}</p>
+        )}
       </header>
 
-      <div className="px-6 py-5 space-y-6">
+      <div className="px-8 py-6 space-y-8">
         {/* Assessment Summary */}
         <section>
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-2">
-            Assessment Summary
-          </h3>
-          <p className="text-slate-800 leading-relaxed">{assessmentSummary}</p>
+          <h3 className={SECTION_HEADER}>Assessment Summary</h3>
+          <p className="text-slate-800 leading-relaxed text-[15px]">
+            {assessmentSummary}
+          </p>
         </section>
 
         {/* Findings */}
         {findings?.length > 0 && (
           <section>
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-3">
-              Findings
-            </h3>
-            <div className="space-y-4">
-              {findings.map((finding) => (
-                <div
-                  key={finding.label}
-                  className="p-4 rounded-lg border border-slate-200 bg-slate-50/50"
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-semibold text-slate-800">
-                      Condition: {finding.displayName}
-                    </span>
-                    <span className="text-sm font-medium text-slate-600">
-                      Likelihood: {finding.likelihood} • Confidence: {finding.confidencePct}%
-                    </span>
-                  </div>
-                  <p className="text-sm text-slate-600">{finding.description}</p>
-                </div>
-              ))}
+            <h3 className={`${SECTION_HEADER} mb-3`}>Findings</h3>
+            <div className="overflow-x-auto border border-slate-200">
+              <table className="min-w-full divide-y divide-slate-200">
+                <thead className="bg-[#1e40af]/10">
+                  <tr>
+                    <th className={TABLE_HEADER}>Condition</th>
+                    <th className={TABLE_HEADER}>Likelihood</th>
+                    <th className={TABLE_HEADER}>Confidence</th>
+                    <th className={TABLE_HEADER}>Description</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-200 bg-white">
+                  {findings.map((finding) => (
+                    <tr key={finding.label}>
+                      <td className="px-4 py-3 text-sm font-medium text-slate-800">
+                        {finding.displayName}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-slate-600">
+                        {finding.likelihood}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-slate-600">
+                        {finding.confidencePct}%
+                      </td>
+                      <td className="px-4 py-3 text-sm text-slate-600">
+                        {finding.description}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </section>
         )}
@@ -68,9 +84,7 @@ export const DiagnosticReport = ({ report }) => {
         {/* Potential Symptoms */}
         {potentialSymptoms && Object.keys(potentialSymptoms).length > 0 && (
           <section>
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-3">
-              Potential Symptoms
-            </h3>
+            <h3 className={`${SECTION_HEADER} mb-3`}>Potential Symptoms</h3>
             <div className="space-y-3">
               {Object.entries(potentialSymptoms).map(([condition, symptoms]) => (
                 <div key={condition}>
@@ -92,9 +106,7 @@ export const DiagnosticReport = ({ report }) => {
         {/* Recommendations */}
         {recommendations?.length > 0 && (
           <section>
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-2">
-              Recommendations
-            </h3>
+            <h3 className={SECTION_HEADER}>Recommendations</h3>
             <ul className="space-y-1">
               {recommendations.map((rec) => (
                 <li key={rec} className="flex gap-2 text-slate-700">
@@ -107,10 +119,8 @@ export const DiagnosticReport = ({ report }) => {
         )}
 
         {/* Disclaimer */}
-        <section className="pt-4 border-t border-slate-200">
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-2">
-            Disclaimer
-          </h3>
+        <section className="pt-6 border-t border-slate-200">
+          <h3 className={SECTION_HEADER}>Disclaimer</h3>
           <p className="text-sm text-slate-600 leading-relaxed">{disclaimer}</p>
         </section>
       </div>

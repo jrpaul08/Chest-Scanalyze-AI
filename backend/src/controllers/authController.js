@@ -3,9 +3,9 @@ import jwt from 'jsonwebtoken';
 
 // Generate JWT token
 const generateToken = (userId) => {
-  return jwt.sign({ userId }, process.env.JWT_SECRET || 'fallback_secret_key', {
-    expiresIn: '7d'
-  });
+  const secret = process.env.JWT_SECRET;
+  if (!secret) throw new Error('JWT_SECRET environment variable is required');
+  return jwt.sign({ userId }, secret, { expiresIn: '7d' });
 };
 
 // Register new user

@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import predictRoutes from "./routes/predictRoutes.js";
+import libraryRoutes from "./routes/libraryRoutes.js";
 import { connectDB } from "./config/db.js";
 import dotenv from "dotenv";
 
@@ -23,6 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/predict", predictRoutes);
+app.use("/api/library", libraryRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

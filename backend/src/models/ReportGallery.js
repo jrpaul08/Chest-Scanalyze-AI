@@ -2,6 +2,12 @@ import mongoose from 'mongoose';
 
 const reportGallerySchema = new mongoose.Schema(
   {
+    reportId: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+    },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
@@ -15,6 +21,10 @@ const reportGallerySchema = new mongoose.Schema(
     originalFilename: {
       type: String,
       default: 'image.jpg',
+    },
+    mimetype: {
+      type: String,
+      default: 'image/jpeg',
     },
     report: {
       type: mongoose.Schema.Types.Mixed,

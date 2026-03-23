@@ -10,6 +10,8 @@ export const UploadPage = () => {
     previewUrl,
     isDragging,
     isLoading,
+    isSaving,
+    saveSuccess,
     error,
     result,
     handleFileChange,
@@ -18,6 +20,7 @@ export const UploadPage = () => {
     handleDragEnter,
     handleDragLeave,
     handlePredict,
+    handleSaveToLibrary,
   } = useUploadPage()
 
   return (
@@ -94,6 +97,19 @@ export const UploadPage = () => {
           {result?.report && (
             <div className="mt-8 pt-6 border-t border-slate-200">
               <DiagnosticReport report={result.report} />
+              <div className="mt-6 flex items-center gap-3">
+                <button
+                  onClick={handleSaveToLibrary}
+                  disabled={isSaving || saveSuccess}
+                  className={`px-5 py-2.5 rounded-lg font-medium transition-colors ${
+                    isSaving || saveSuccess
+                      ? 'bg-slate-300 text-slate-500 cursor-not-allowed'
+                      : 'bg-slate-700 text-white hover:bg-slate-800'
+                  }`}
+                >
+                  {isSaving ? 'Saving...' : saveSuccess ? 'Saved to Gallery' : 'Save to Gallery'}
+                </button>
+              </div>
             </div>
           )}
         </div>

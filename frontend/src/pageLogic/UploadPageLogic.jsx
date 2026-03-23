@@ -7,6 +7,8 @@ export function useUploadPage() {
   const [previewUrl, setPreviewUrl] = useState(null)
   const [isDragging, setIsDragging] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  const [saveSuccess, setSaveSuccess] = useState(false)
   const [error, setError] = useState(null)
   const [result, setResult] = useState(null)
 
@@ -87,6 +89,7 @@ export function useUploadPage() {
       }
 
       setResult(data)
+      setSaveSuccess(false)
     } catch (err) {
       setError(err.message || 'Something went wrong')
     } finally {
@@ -94,10 +97,46 @@ export function useUploadPage() {
     }
   }
 
+  const handleSaveToLibrary = async () => {
+    if (!file || !result?.report) return
+
+    setIsSaving(true)
+    setError(null)
+    setSaveSuccess(false)
+
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('report', JSON.stringify(result.report))
+
+      const token = localStorage.getItem('token')
+      const response = await fetch(`${API_URL}/api/library`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to save')
+      }
+
+      setSaveSuccess(true)
+    } catch (err) {
+      setError(err.message || 'Failed to save to library')
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
   const reset = () => {
     setFile(null)
     setError(null)
     setResult(null)
+    setSaveSuccess(false)
   }
 
   return {
@@ -105,6 +144,8 @@ export function useUploadPage() {
     previewUrl,
     isDragging,
     isLoading,
+    isSaving,
+    saveSuccess,
     error,
     result,
     handleFileChange,
@@ -113,6 +154,7 @@ export function useUploadPage() {
     handleDragEnter,
     handleDragLeave,
     handlePredict,
+    handleSaveToLibrary,
     reset,
   }
 }

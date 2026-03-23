@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { ArrowLeftIcon, XMarkIcon, ArrowDownTrayIcon, TrashIcon } from '@heroicons/react/24/solid'
+import { Link, useNavigate } from 'react-router-dom'
+import { ArrowLeftIcon, XMarkIcon, ArrowDownTrayIcon, TrashIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/solid'
 import { DiagnosticReport } from '../components/DiagnosticReport'
 import { generateReportPdf } from '../utils/reportToPdf'
-import { API_BASE_URL, getAuthHeaders } from '../config/api'
+import { API_BASE_URL, getAuthHeaders, logout } from '../config/api'
 
 export const GalleryPage = () => {
+  const navigate = useNavigate()
   const [entries, setEntries] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -84,7 +85,7 @@ export const GalleryPage = () => {
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
       <div className="bg-slate-900 text-white py-10">
-        <div className="max-w-5xl mx-auto px-6">
+        <div className="max-w-5xl mx-auto px-6 flex justify-between items-start">
           <Link
             to="/home"
             className="inline-flex items-center gap-2 text-blue-200 hover:text-white mb-4"
@@ -92,6 +93,15 @@ export const GalleryPage = () => {
             <ArrowLeftIcon className="w-5 h-5" />
             Back to Home
           </Link>
+          <button
+            onClick={() => { logout(); navigate('/login') }}
+            className="inline-flex items-center gap-2 text-blue-200 hover:text-white"
+          >
+            <ArrowRightOnRectangleIcon className="w-5 h-5" />
+            Log out
+          </button>
+        </div>
+        <div className="max-w-5xl mx-auto px-6">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Report Gallery</h1>
           <p className="mt-2 text-blue-200">Your saved chest X-ray reports.</p>
         </div>

@@ -1,10 +1,12 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
-import { ArrowLeftIcon } from '@heroicons/react/24/solid'
+import { Link, useNavigate } from 'react-router-dom'
+import { ArrowLeftIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/solid'
+import { logout } from '../config/api'
 import { useUploadPage } from '../pageLogic/UploadPageLogic'
 import { DiagnosticReport } from '../components/DiagnosticReport'
 
 export const UploadPage = () => {
+  const navigate = useNavigate()
   const {
     file,
     previewUrl,
@@ -27,7 +29,7 @@ export const UploadPage = () => {
     <div className="min-h-screen bg-white">
       {/* Top banner */}
       <div className="bg-slate-900 text-white py-10">
-        <div className="max-w-4xl mx-auto px-6">
+        <div className="max-w-4xl mx-auto px-6 flex justify-between items-start">
           <Link
             to="/home"
             className="inline-flex items-center gap-2 text-blue-200 hover:text-white mb-4"
@@ -35,6 +37,15 @@ export const UploadPage = () => {
             <ArrowLeftIcon className="w-5 h-5" />
             Back to Home
           </Link>
+          <button
+            onClick={() => { logout(); navigate('/login') }}
+            className="inline-flex items-center gap-2 text-blue-200 hover:text-white"
+          >
+            <ArrowRightOnRectangleIcon className="w-5 h-5" />
+            Log out
+          </button>
+        </div>
+        <div className="max-w-4xl mx-auto px-6">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight">New Scan</h1>
           <p className="mt-2 text-blue-200">Upload a chest X-ray to get an AI-generated analysis.</p>
         </div>

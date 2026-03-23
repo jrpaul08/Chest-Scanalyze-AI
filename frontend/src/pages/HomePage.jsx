@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   ArrowUpTrayIcon,
   BookOpenIcon,
@@ -7,13 +7,29 @@ import {
   StarIcon,
   BoltIcon,
   DocumentChartBarIcon,
+  ArrowRightOnRectangleIcon,
 } from '@heroicons/react/24/solid'
+import { logout } from '../config/api'
 
 export const Homepage = () => {
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout()
+    navigate('/login')
+  }
+
   return (
     <div className="min-h-screen bg-white">
       {/* Top banner area matching brand colors */}
-      <div className="bg-slate-900 text-white py-14">
+      <div className="bg-slate-900 text-white py-14 relative">
+        <button
+          onClick={handleLogout}
+          className="absolute top-6 right-6 inline-flex items-center gap-2 text-blue-200 hover:text-white"
+        >
+          <ArrowRightOnRectangleIcon className="w-5 h-5" />
+          Log out
+        </button>
         <div className="max-w-5xl mx-auto px-6 text-center">
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Chest Scanalyze AI</h1>
           <p className="mt-3 text-blue-200 text-base md:text-lg font-medium">

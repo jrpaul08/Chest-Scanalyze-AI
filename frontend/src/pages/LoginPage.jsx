@@ -5,9 +5,7 @@ import { useLoginPage } from '../pageLogic/LoginPageLogic'
 export const LoginPage = () => {
   const {
     isSignUp,
-    setIsSignUp,
     formData,
-    setFormData,
     errors,
     isLoading,
     handleChange,
@@ -161,7 +159,7 @@ export const LoginPage = () => {
                   {isSignUp ? 'Creating Account...' : 'Signing In...'}
                 </div>
               ) : (
-                isSignUp ? 'Sign Up' : 'Login In'
+                isSignUp ? 'Sign Up' : 'Log In'
               )}
             </button>
           </form>
@@ -175,7 +173,7 @@ export const LoginPage = () => {
                 className="text-white font-semibold hover:text-blue-300 transition-colors duration-200 underline"
                 onClick={toggleModeAndReset}
               >
-                {isSignUp ? 'Login In' : 'Sign Up'}
+                {isSignUp ? 'Log In' : 'Sign Up'}
               </button>
             </p>
           </div>

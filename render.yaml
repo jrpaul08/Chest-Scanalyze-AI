@@ -1,0 +1,30 @@
+# Render Blueprint - Chest Scanalyze AI
+# Deploy via: New → Blueprint, connect this repo
+# Set environment variables in the Render dashboard after creation
+
+services:
+  - type: web
+    name: chest-scanalyze-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: MONGO_URI
+        sync: false
+      - key: MODEL_SERVICE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false
+
+  - type: web
+    name: chest-scanalyze-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false

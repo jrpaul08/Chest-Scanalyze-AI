@@ -13,7 +13,9 @@ export const authenticateToken = async (req, res, next) => {
       });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret_key');
+    const secret = process.env.JWT_SECRET;
+    if (!secret) throw new Error('JWT_SECRET environment variable is required');
+    const decoded = jwt.verify(token, secret);
     
     // Verify user still exists
     const user = await User.findById(decoded.userId);

@@ -48,8 +48,10 @@ export const predict = async (req, res) => {
       threshold: getReportThreshold(),
     });
 
-    console.log('[Predict] Raw predictions:', data.predictions);
-    console.log('[Predict] Report findings:', report.findings?.map((f) => `${f.displayName} (${f.confidencePct}%)`));
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[Predict] Raw predictions:', data.predictions);
+      console.log('[Predict] Report findings:', report.findings?.map((f) => `${f.displayName} (${f.confidencePct}%)`));
+    }
 
     res.json({
       success: true,

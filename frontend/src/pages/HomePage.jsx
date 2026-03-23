@@ -90,16 +90,16 @@ export const Homepage = () => {
             </div>
           </Link>
 
-          {/* Model Insights */}
-          <Link to="/about-model" className="group block">
-            <div className="h-full min-h-44 bg-white rounded-2xl border-2 border-slate-200 shadow-md hover:border-violet-400 hover:shadow-lg transition-all p-6 text-center">
-              <div className="mx-auto mb-4 w-14 h-14 rounded-xl bg-violet-50 text-violet-700 flex items-center justify-center group-hover:bg-violet-100">
+          {/* Model Insights - disabled until page is ready */}
+          <div className="group block opacity-60 cursor-not-allowed">
+            <div className="h-full min-h-44 bg-white rounded-2xl border-2 border-slate-200 p-6 text-center pointer-events-none">
+              <div className="mx-auto mb-4 w-14 h-14 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center">
                 <LightBulbIcon className="w-7 h-7" />
               </div>
-              <h3 className="text-lg font-semibold text-slate-800">Model Insights</h3>
-              <p className="mt-1 text-sm text-slate-600">Learn how we train, validate, and improve our AI models.</p>
+              <h3 className="text-lg font-semibold text-slate-500">Model Insights</h3>
+              <p className="mt-1 text-sm text-slate-400">Coming soon.</p>
             </div>
-          </Link>
+          </div>
         </div>
       </div>
     </div>

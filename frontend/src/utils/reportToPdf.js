@@ -165,7 +165,6 @@ function renderContent(doc, report, imageData, imageDims, format, scale) {
  */
 export async function generateReportPdf(report, imageData = null) {
   const doc = new jsPDF()
-  const pageWidth = doc.internal.pageSize.getWidth()
   const availableHeight = CONTENT_BOTTOM - CONTENT_TOP
 
   let imageDims = null

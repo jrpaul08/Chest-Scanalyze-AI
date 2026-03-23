@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
-
-const API_URL = 'http://localhost:3000'
+import { API_BASE_URL, getAuthHeaders } from '../config/api'
 
 export function useUploadPage() {
   const [file, setFile] = useState(null)
@@ -73,12 +72,9 @@ export function useUploadPage() {
       const formData = new FormData()
       formData.append('file', file)
 
-      const token = localStorage.getItem('token')
-      const response = await fetch(`${API_URL}/api/predict`, {
+      const response = await fetch(`${API_BASE_URL}/api/predict`, {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: getAuthHeaders(),
         body: formData,
       })
 
@@ -109,12 +105,9 @@ export function useUploadPage() {
       formData.append('file', file)
       formData.append('report', JSON.stringify(result.report))
 
-      const token = localStorage.getItem('token')
-      const response = await fetch(`${API_URL}/api/library`, {
+      const response = await fetch(`${API_BASE_URL}/api/library`, {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: getAuthHeaders(),
         body: formData,
       })
 
@@ -124,6 +117,12 @@ export function useUploadPage() {
         throw new Error(data.message || 'Failed to save')
       }
 
+      if (data.reportId && result?.report) {
+        setResult((prev) => ({
+          ...prev,
+          report: { ...prev.report, reportId: data.reportId },
+        }))
+      }
       setSaveSuccess(true)
     } catch (err) {
       setError(err.message || 'Failed to save to library')

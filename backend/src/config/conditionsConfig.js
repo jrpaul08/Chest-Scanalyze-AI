@@ -144,10 +144,14 @@ export const CONDITIONS_CONFIG = {
 }
 
 /**
- * Likelihood thresholds for human-readable labels.
- * Adjust these to change how probabilities are presented.
+ * Report thresholds - adjust as model improves.
+ * Single place to tune report inclusion and likelihood labels.
  */
+export const REPORT_THRESHOLD = 0.05
+
 export const LIKELIHOOD_THRESHOLDS = {
   likely: 0.65,
   possible: 0.35,
 }
+
+export const SUMMARY_MAX_NAMED = 2

@@ -14,6 +14,7 @@ export const DiagnosticReport = ({ report }) => {
     time,
     reportId,
     assessmentSummary,
+    assessmentSummaryParts,
     findings,
     potentialSymptoms,
     recommendations,
@@ -40,7 +41,17 @@ export const DiagnosticReport = ({ report }) => {
         <section>
           <h3 className={SECTION_HEADER}>Assessment Summary</h3>
           <p className="text-slate-800 leading-relaxed text-[15px]">
-            {assessmentSummary}
+            {assessmentSummaryParts?.length ? (
+              assessmentSummaryParts.map((part, i) =>
+                part.type === 'bold' ? (
+                  <strong key={i}>{part.content}</strong>
+                ) : (
+                  <span key={i}>{part.content}</span>
+                )
+              )
+            ) : (
+              assessmentSummary
+            )}
           </p>
         </section>
 
@@ -61,7 +72,7 @@ export const DiagnosticReport = ({ report }) => {
                 <tbody className="divide-y divide-slate-200 bg-white">
                   {findings.map((finding) => (
                     <tr key={finding.label}>
-                      <td className="px-4 py-3 text-sm font-medium text-slate-800">
+                      <td className="px-4 py-3 text-sm font-semibold text-slate-800">
                         {finding.displayName}
                       </td>
                       <td className="px-4 py-3 text-sm text-slate-600">

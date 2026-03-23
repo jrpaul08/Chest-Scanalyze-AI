@@ -79,13 +79,13 @@ export const Homepage = () => {
             </div>
           </Link>
 
-          {/* Report Library */}
-          <Link to="/library" className="group block">
+          {/* Report Gallery */}
+          <Link to="/gallery" className="group block">
             <div className="h-full min-h-44 bg-white rounded-2xl border-2 border-slate-200 shadow-md hover:border-emerald-400 hover:shadow-lg transition-all p-6 text-center">
               <div className="mx-auto mb-4 w-14 h-14 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center group-hover:bg-emerald-100">
                 <BookOpenIcon className="w-7 h-7" />
               </div>
-              <h3 className="text-lg font-semibold text-slate-800">Report Library</h3>
+              <h3 className="text-lg font-semibold text-slate-800">Report Gallery</h3>
               <p className="mt-1 text-sm text-slate-600">Review previous scans and their AI-generated reports.</p>
             </div>
           </Link>

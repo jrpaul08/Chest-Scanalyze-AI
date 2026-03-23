@@ -6,19 +6,21 @@
 import {
   CONDITIONS_CONFIG,
   LIKELIHOOD_THRESHOLDS,
+  REPORT_THRESHOLD,
+  SUMMARY_MAX_NAMED,
 } from '../config/conditionsConfig.js'
-
-const DEFAULT_THRESHOLD = Number(process.env.REPORT_THRESHOLD) || 0.35
 const RECOMMENDATION_SUFFIX =
   'Correlation with symptoms and clinical evaluation is recommended.'
 
 /**
  * Get human-readable likelihood label from probability.
+ * Three tiers: Likely (≥0.65), Possible (0.35–0.65), Low probability (<0.35).
+ * Only called for findings above REPORT_THRESHOLD, so no need for lower bound.
  */
-function getLikelihood(probability, thresholds = LIKELIHOOD_THRESHOLDS) {
-  if (probability >= thresholds.likely) return 'Likely'
-  if (probability >= thresholds.possible) return 'Possible'
-  return null
+function getLikelihood(probability) {
+  if (probability >= LIKELIHOOD_THRESHOLDS.likely) return 'Likely'
+  if (probability >= LIKELIHOOD_THRESHOLDS.possible) return 'Possible'
+  return 'Low probability'
 }
 
 /**
@@ -31,32 +33,56 @@ function formatLabel(label) {
 
 /**
  * Generate natural-language assessment summary from top findings.
+ * Returns both full text and structured parts for bold rendering.
+ * Adapts when many findings: names top SUMMARY_MAX_NAMED, then "see table".
  */
 function generateAssessmentSummary(findings) {
   if (findings.length === 0) {
-    return `No significant findings were detected above the screening threshold. ${RECOMMENDATION_SUFFIX}`
+    const text = 'No significant findings were detected above the screening threshold. ' + RECOMMENDATION_SUFFIX
+    return { text, parts: [{ type: 'text', content: text }] }
   }
 
   const primary = findings[0]
-  const primaryName = formatLabel(primary.label)
+  const primaryDisplay = formatLabel(primary.label).toLowerCase()
 
   if (findings.length === 1) {
-    return `The results suggest ${primaryName.toLowerCase()}. ${RECOMMENDATION_SUFFIX}`
+    return {
+      text: `The results suggest ${primaryDisplay}. ${RECOMMENDATION_SUFFIX}`,
+      parts: [
+        { type: 'text', content: 'The results suggest ' },
+        { type: 'bold', content: primaryDisplay },
+        { type: 'text', content: `. ${RECOMMENDATION_SUFFIX}` },
+      ],
+    }
   }
 
   const secondary = findings[1]
-  const secondaryName = formatLabel(secondary.label).toLowerCase()
-  return `The results suggest ${primaryName.toLowerCase()}, with additional signs that may indicate ${secondaryName}. ${RECOMMENDATION_SUFFIX}`
-}
+  const secondaryDisplay = formatLabel(secondary.label).toLowerCase()
 
-/**
- * Generate unique report ID for the report.
- */
-function generateReportId() {
-  const now = new Date()
-  const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '')
-  const timeStr = now.toTimeString().slice(0, 8).replace(/:/g, '')
-  return `CX-${dateStr}-${timeStr}`
+  if (findings.length <= SUMMARY_MAX_NAMED) {
+    return {
+      text: `The results suggest ${primaryDisplay}, with additional signs that may indicate ${secondaryDisplay}. ${RECOMMENDATION_SUFFIX}`,
+      parts: [
+        { type: 'text', content: 'The results suggest ' },
+        { type: 'bold', content: primaryDisplay },
+        { type: 'text', content: ', with additional signs that may indicate ' },
+        { type: 'bold', content: secondaryDisplay },
+        { type: 'text', content: `. ${RECOMMENDATION_SUFFIX}` },
+      ],
+    }
+  }
+
+  // 3+ findings: name top two, direct to table; only disease names bold
+  return {
+    text: `The results suggest the most prominent findings to be ${primaryDisplay} and ${secondaryDisplay}. See findings table for full list. ${RECOMMENDATION_SUFFIX}`,
+    parts: [
+      { type: 'text', content: 'The results suggest the most prominent findings to be ' },
+      { type: 'bold', content: primaryDisplay },
+      { type: 'text', content: ' and ' },
+      { type: 'bold', content: secondaryDisplay },
+      { type: 'text', content: `. See findings table for full list. ${RECOMMENDATION_SUFFIX}` },
+    ],
+  }
 }
 
 /**
@@ -64,11 +90,11 @@ function generateReportId() {
  *
  * @param {Object} predictions - Map of condition label → probability (0–1)
  * @param {Object} options - Optional overrides
- * @param {number} options.threshold - Minimum probability to include (default: REPORT_THRESHOLD or 0.35)
+ * @param {number} options.threshold - Minimum probability to include (default: REPORT_THRESHOLD)
  * @returns {Object} Structured report ready for display
  */
 export function generateReport(predictions, options = {}) {
-  const threshold = options.threshold ?? DEFAULT_THRESHOLD
+  const threshold = options.threshold ?? REPORT_THRESHOLD
 
   // Filter and sort: only conditions above threshold, sorted by confidence
   const entries = Object.entries(predictions || {})
@@ -76,14 +102,13 @@ export function generateReport(predictions, options = {}) {
     .sort(([, a], [, b]) => b - a)
 
   const findings = entries.map(([label, probability]) => {
-    const likelihood = getLikelihood(probability)
     const config = CONDITIONS_CONFIG[label]
     return {
       label,
       displayName: formatLabel(label),
       probability,
       confidencePct: Math.round(probability * 100),
-      likelihood: likelihood ?? 'Possible',
+      likelihood: getLikelihood(probability),
       description: config?.description ?? 'Finding detected in lung tissue.',
     }
   })
@@ -98,7 +123,8 @@ export function generateReport(predictions, options = {}) {
   }
 
   const now = new Date()
-  const assessmentSummary = generateAssessmentSummary(findings)
+  const { text: assessmentSummary, parts: assessmentSummaryParts } =
+    generateAssessmentSummary(findings)
 
   return {
     title: 'Chest X-Ray Diagnostic Report',
@@ -111,8 +137,8 @@ export function generateReport(predictions, options = {}) {
       hour: 'numeric',
       minute: '2-digit',
     }),
-    reportId: generateReportId(),
     assessmentSummary,
+    assessmentSummaryParts,
     findings,
     potentialSymptoms,
     recommendations: [

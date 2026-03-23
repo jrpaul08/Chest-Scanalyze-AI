@@ -124,6 +124,12 @@ export function useUploadPage() {
         throw new Error(data.message || 'Failed to save')
       }
 
+      if (data.reportId && result?.report) {
+        setResult((prev) => ({
+          ...prev,
+          report: { ...prev.report, reportId: data.reportId },
+        }))
+      }
       setSaveSuccess(true)
     } catch (err) {
       setError(err.message || 'Failed to save to library')

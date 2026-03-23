@@ -50,16 +50,6 @@ function generateAssessmentSummary(findings) {
 }
 
 /**
- * Generate unique report ID for the report.
- */
-function generateReportId() {
-  const now = new Date()
-  const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '')
-  const timeStr = now.toTimeString().slice(0, 8).replace(/:/g, '')
-  return `CX-${dateStr}-${timeStr}`
-}
-
-/**
  * Generate structured diagnostic report from model predictions.
  *
  * @param {Object} predictions - Map of condition label → probability (0–1)
@@ -111,7 +101,6 @@ export function generateReport(predictions, options = {}) {
       hour: 'numeric',
       minute: '2-digit',
     }),
-    reportId: generateReportId(),
     assessmentSummary,
     findings,
     potentialSymptoms,

@@ -3,8 +3,7 @@ import { Link } from 'react-router-dom'
 import { ArrowLeftIcon, XMarkIcon, ArrowDownTrayIcon, TrashIcon } from '@heroicons/react/24/solid'
 import { DiagnosticReport } from '../components/DiagnosticReport'
 import { generateReportPdf } from '../utils/reportToPdf'
-
-const API_URL = 'http://localhost:3000'
+import { API_BASE_URL, getAuthHeaders } from '../config/api'
 
 export const GalleryPage = () => {
   const [entries, setEntries] = useState([])
@@ -16,18 +15,23 @@ export const GalleryPage = () => {
 
   useEffect(() => {
     const fetchGallery = async () => {
-      const token = localStorage.getItem('token')
-      const response = await fetch(`${API_URL}/api/library`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      const data = await response.json()
-      if (!response.ok) {
-        setError(data.message || 'Failed to load gallery')
-        return
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/library`, {
+          headers: getAuthHeaders(),
+        })
+        const data = await response.json()
+        if (!response.ok) {
+          setError(data.message || 'Failed to load gallery')
+          return
+        }
+        setEntries(data.entries || [])
+      } catch (err) {
+        setError(err.message || 'Failed to load gallery')
+      } finally {
+        setIsLoading(false)
       }
-      setEntries(data.entries || [])
     }
-    fetchGallery().finally(() => setIsLoading(false))
+    fetchGallery()
   }, [])
 
   const handleDeleteClick = () => {
@@ -41,10 +45,9 @@ export const GalleryPage = () => {
     }
     if (deleteConfirmStep === 2 && selectedEntry?._id) {
       setIsDeleting(true)
-      const token = localStorage.getItem('token')
-      const response = await fetch(`${API_URL}/api/library/${selectedEntry._id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/library/${selectedEntry._id}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
+        headers: getAuthHeaders(),
       })
       const data = await response.json()
       setIsDeleting(false)

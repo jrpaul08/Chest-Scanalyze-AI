@@ -152,7 +152,6 @@ export const REPORT_THRESHOLD = 0.05
 export const LIKELIHOOD_THRESHOLDS = {
   likely: 0.65,
   possible: 0.35,
-  low: 0.05,
 }
 
 export const SUMMARY_MAX_NAMED = 2

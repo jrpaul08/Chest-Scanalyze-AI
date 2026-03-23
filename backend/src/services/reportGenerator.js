@@ -14,13 +14,13 @@ const RECOMMENDATION_SUFFIX =
 
 /**
  * Get human-readable likelihood label from probability.
- * Three tiers: Likely, Possible, Low probability.
+ * Three tiers: Likely (≥0.65), Possible (0.35–0.65), Low probability (<0.35).
+ * Only called for findings above REPORT_THRESHOLD, so no need for lower bound.
  */
 function getLikelihood(probability) {
   if (probability >= LIKELIHOOD_THRESHOLDS.likely) return 'Likely'
   if (probability >= LIKELIHOOD_THRESHOLDS.possible) return 'Possible'
-  if (probability >= LIKELIHOOD_THRESHOLDS.low) return 'Low probability'
-  return null
+  return 'Low probability'
 }
 
 /**
@@ -90,7 +90,7 @@ function generateAssessmentSummary(findings) {
  *
  * @param {Object} predictions - Map of condition label → probability (0–1)
  * @param {Object} options - Optional overrides
- * @param {number} options.threshold - Minimum probability to include (default: REPORT_THRESHOLD or 0.35)
+ * @param {number} options.threshold - Minimum probability to include (default: REPORT_THRESHOLD)
  * @returns {Object} Structured report ready for display
  */
 export function generateReport(predictions, options = {}) {
@@ -102,14 +102,13 @@ export function generateReport(predictions, options = {}) {
     .sort(([, a], [, b]) => b - a)
 
   const findings = entries.map(([label, probability]) => {
-    const likelihood = getLikelihood(probability)
     const config = CONDITIONS_CONFIG[label]
     return {
       label,
       displayName: formatLabel(label),
       probability,
       confidencePct: Math.round(probability * 100),
-      likelihood: likelihood ?? 'Low probability',
+      likelihood: getLikelihood(probability),
       description: config?.description ?? 'Finding detected in lung tissue.',
     }
   })

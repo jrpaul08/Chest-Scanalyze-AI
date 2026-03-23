@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowLeftIcon, XMarkIcon, ArrowDownTrayIcon } from '@heroicons/react/24/solid'
+import { ArrowLeftIcon, XMarkIcon, ArrowDownTrayIcon, TrashIcon } from '@heroicons/react/24/solid'
 import { DiagnosticReport } from '../components/DiagnosticReport'
 import { generateReportPdf } from '../utils/reportToPdf'
 
@@ -11,6 +11,8 @@ export const GalleryPage = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
   const [selectedEntry, setSelectedEntry] = useState(null)
+  const [deleteConfirmStep, setDeleteConfirmStep] = useState(null) // null | 1 | 2
+  const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
     const fetchGallery = async () => {
@@ -27,6 +29,39 @@ export const GalleryPage = () => {
     }
     fetchGallery().finally(() => setIsLoading(false))
   }, [])
+
+  const handleDeleteClick = () => {
+    if (deleteConfirmStep === null) setDeleteConfirmStep(1)
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (deleteConfirmStep === 1) {
+      setDeleteConfirmStep(2)
+      return
+    }
+    if (deleteConfirmStep === 2 && selectedEntry?._id) {
+      setIsDeleting(true)
+      const token = localStorage.getItem('token')
+      const response = await fetch(`${API_URL}/api/library/${selectedEntry._id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      const data = await response.json()
+      setIsDeleting(false)
+      if (!response.ok) {
+        setError(data.message || 'Failed to delete report')
+        setDeleteConfirmStep(null)
+        return
+      }
+      setEntries((prev) => prev.filter((e) => e._id !== selectedEntry._id))
+      setSelectedEntry(null)
+      setDeleteConfirmStep(null)
+    }
+  }
+
+  const handleDeleteCancel = () => {
+    setDeleteConfirmStep(null)
+  }
 
   const formatDate = (entry) => {
     if (entry?.report?.date) return entry.report.date
@@ -118,15 +153,26 @@ export const GalleryPage = () => {
       {selectedEntry && (
         <div
           className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
-          onClick={() => setSelectedEntry(null)}
+          onClick={() => {
+            setSelectedEntry(null)
+            setDeleteConfirmStep(null)
+          }}
         >
           <div
-            className="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden"
+            className="relative bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="shrink-0 bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center rounded-t-xl z-10">
               <h2 className="text-lg font-semibold text-slate-800">Report Details</h2>
               <div className="flex items-center gap-2">
+                <button
+                  onClick={handleDeleteClick}
+                  disabled={isDeleting}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-red-600 hover:bg-red-50 text-sm font-medium disabled:opacity-50"
+                >
+                  <TrashIcon className="w-4 h-4" />
+                  Delete
+                </button>
                 <button
                   onClick={async () => {
                     if (!selectedEntry?.report) return
@@ -143,14 +189,53 @@ export const GalleryPage = () => {
                   Download PDF
                 </button>
                 <button
-                  onClick={() => setSelectedEntry(null)}
+                  onClick={() => {
+                    setSelectedEntry(null)
+                    setDeleteConfirmStep(null)
+                  }}
                   className="p-2 rounded-lg hover:bg-slate-100 text-slate-500"
                 >
                   <XMarkIcon className="w-5 h-5" />
                 </button>
               </div>
             </div>
-            <div className="flex-1 overflow-y-auto p-6 space-y-6">
+            {/* Delete confirmation overlay */}
+            {deleteConfirmStep && (
+              <div className="absolute inset-0 bg-white/95 z-20 flex items-center justify-center p-6 rounded-xl">
+                <div className="text-center max-w-sm">
+                  <h3 className="text-lg font-semibold text-slate-800">
+                    {deleteConfirmStep === 1
+                      ? 'Delete this report?'
+                      : 'Are you absolutely sure?'}
+                  </h3>
+                  <p className="mt-2 text-sm text-slate-600">
+                    {deleteConfirmStep === 1
+                      ? 'This will remove it from your gallery permanently.'
+                      : 'This action cannot be undone.'}
+                  </p>
+                  <div className="mt-6 flex gap-3 justify-center">
+                    <button
+                      onClick={handleDeleteCancel}
+                      className="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 font-medium"
+                    >
+                      {deleteConfirmStep === 1 ? 'Cancel' : 'Go Back'}
+                    </button>
+                    <button
+                      onClick={handleDeleteConfirm}
+                      disabled={isDeleting}
+                      className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 font-medium disabled:opacity-50"
+                    >
+                      {isDeleting
+                        ? 'Deleting...'
+                        : deleteConfirmStep === 1
+                        ? 'Delete'
+                        : 'Yes, Delete Permanently'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+            <div className="flex-1 overflow-y-auto p-6 space-y-6 relative">
               {selectedEntry.imageData && (
                 <div className="rounded-lg overflow-hidden border border-slate-200">
                   <img

@@ -1,6 +1,6 @@
 import express from 'express';
 import multer from 'multer';
-import { getGallery, saveToLibrary } from '../controllers/libraryController.js';
+import { getGallery, saveToLibrary, deleteFromGallery } from '../controllers/libraryController.js';
 import { authenticateToken } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -15,5 +15,8 @@ router.get('/', authenticateToken, getGallery);
 
 // POST /api/library - requires auth, accepts image file + report JSON
 router.post('/', authenticateToken, upload.single('file'), saveToLibrary);
+
+// DELETE /api/library/:id - remove gallery entry (must own it)
+router.delete('/:id', authenticateToken, deleteFromGallery);
 
 export default router;

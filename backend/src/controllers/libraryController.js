@@ -106,3 +106,34 @@ export const saveToLibrary = async (req, res) => {
     });
   }
 };
+
+export const deleteFromGallery = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const entry = await ReportGallery.findOne({
+      _id: id,
+      userId: req.userId,
+    });
+
+    if (!entry) {
+      return res.status(404).json({
+        success: false,
+        message: 'Report not found or you do not have permission to delete it',
+      });
+    }
+
+    await ReportGallery.deleteOne({ _id: id, userId: req.userId });
+
+    res.json({
+      success: true,
+      message: 'Report deleted',
+    });
+  } catch (error) {
+    console.error('Delete from gallery error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to delete report',
+    });
+  }
+};

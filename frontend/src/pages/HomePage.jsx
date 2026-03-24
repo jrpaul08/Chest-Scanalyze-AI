@@ -1,15 +1,18 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import {
-  ArrowUpTrayIcon,
-  BookOpenIcon,
-  LightBulbIcon,
-  StarIcon,
-  BoltIcon,
-  DocumentChartBarIcon,
-  ArrowRightOnRectangleIcon,
-} from '@heroicons/react/24/solid'
+import { ArrowRightOnRectangleIcon } from '@heroicons/react/24/solid'
 import { logout } from '../config/api'
+import iconNewScan from '../assets/home/icon-new-scan.png'
+import iconReportGallery from '../assets/home/icon-report-gallery.png'
+import iconModelInsights from '../assets/home/icon-model-insights.png'
+import iconHighAccuracy from '../assets/home/icon-high-accuracy.png'
+import iconRapidAnalysis from '../assets/home/icon-rapid-analysis.png'
+import iconDetailedReports from '../assets/home/icon-detailed-reports.png'
+
+/** Uniform black line-art; disabled tiles use ICON_QUICK_DISABLED. */
+const ICON_KEY = 'h-7 w-7 object-contain brightness-0'
+const ICON_QUICK = 'h-8 w-8 object-contain brightness-0'
+const ICON_QUICK_DISABLED = 'h-8 w-8 object-contain brightness-0 opacity-45'
 
 export const Homepage = () => {
   const navigate = useNavigate()
@@ -38,14 +41,14 @@ export const Homepage = () => {
         </div>
       </div>
 
-      {/* Key Features - informational section (not clickable) */}
+      {/* What We Offer - informational section (not clickable) */}
       <div className="bg-slate-50 py-12">
         <div className="max-w-5xl mx-auto px-6">
-          <h2 className="text-xl font-bold text-slate-800 mb-6">Key Features</h2>
+          <h2 className="text-xl font-bold text-slate-800 mb-6">What We Offer</h2>
           <div className="flex flex-col gap-6 sm:flex-row sm:gap-8">
             <div className="flex gap-4">
-              <div className="shrink-0 w-10 h-10 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center">
-                <StarIcon className="w-5 h-5" />
+              <div className="shrink-0 w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center p-1.5">
+                <img src={iconHighAccuracy} alt="" className={ICON_KEY} />
               </div>
               <div>
                 <h3 className="font-semibold text-slate-800">High Accuracy</h3>
@@ -55,8 +58,8 @@ export const Homepage = () => {
               </div>
             </div>
             <div className="flex gap-4">
-              <div className="shrink-0 w-10 h-10 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center">
-                <BoltIcon className="w-5 h-5" />
+              <div className="shrink-0 w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center p-1.5">
+                <img src={iconRapidAnalysis} alt="" className={ICON_KEY} />
               </div>
               <div>
                 <h3 className="font-semibold text-slate-800">Rapid Analysis</h3>
@@ -66,13 +69,13 @@ export const Homepage = () => {
               </div>
             </div>
             <div className="flex gap-4">
-              <div className="shrink-0 w-10 h-10 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
-                <DocumentChartBarIcon className="w-5 h-5" />
+              <div className="shrink-0 w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center p-1.5">
+                <img src={iconDetailedReports} alt="" className={ICON_KEY} />
               </div>
               <div>
                 <h3 className="font-semibold text-slate-800">Detailed Reports</h3>
                 <p className="mt-1 text-sm text-slate-600">
-                  Comprehensive analysis with probability scores for 14 pulmonary conditions.
+                  Structured diagnostic-style reports with condition insights, confidence levels, and clinical context for detected condition.
                 </p>
               </div>
             </div>
@@ -80,15 +83,15 @@ export const Homepage = () => {
         </div>
       </div>
 
-      {/* Quick Actions - clickable cards */}
+      {/* Features - clickable cards */}
       <div className="max-w-5xl mx-auto px-6 py-12">
-        <h2 className="text-xl font-bold text-slate-800 mb-6">Quick Actions</h2>
+        <h2 className="text-xl font-bold text-slate-800 mb-6">Features</h2>
         <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
           {/* New Scan */}
           <Link to="/upload" className="group block">
             <div className="h-full min-h-44 bg-white rounded-2xl border-2 border-slate-200 shadow-md hover:border-blue-400 hover:shadow-lg transition-all p-6 text-center">
-              <div className="mx-auto mb-4 w-14 h-14 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center group-hover:bg-blue-100">
-                <ArrowUpTrayIcon className="w-7 h-7" />
+              <div className="mx-auto mb-4 w-14 h-14 rounded-xl bg-blue-50 flex items-center justify-center p-2.5 group-hover:bg-blue-100">
+                <img src={iconNewScan} alt="" className={ICON_QUICK} />
               </div>
               <h3 className="text-lg font-semibold text-slate-800">New Scan</h3>
               <p className="mt-1 text-sm text-slate-600">Upload a chest X-ray and generate a diagnostic report.</p>
@@ -97,9 +100,9 @@ export const Homepage = () => {
 
           {/* Report Gallery */}
           <Link to="/gallery" className="group block">
-            <div className="h-full min-h-44 bg-white rounded-2xl border-2 border-slate-200 shadow-md hover:border-emerald-400 hover:shadow-lg transition-all p-6 text-center">
-              <div className="mx-auto mb-4 w-14 h-14 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center group-hover:bg-emerald-100">
-                <BookOpenIcon className="w-7 h-7" />
+            <div className="h-full min-h-44 bg-white rounded-2xl border-2 border-slate-200 shadow-md hover:border-blue-400 hover:shadow-lg transition-all p-6 text-center">
+              <div className="mx-auto mb-4 w-14 h-14 rounded-xl bg-blue-50 flex items-center justify-center p-2.5 group-hover:bg-blue-100">
+                <img src={iconReportGallery} alt="" className={ICON_QUICK} />
               </div>
               <h3 className="text-lg font-semibold text-slate-800">Report Gallery</h3>
               <p className="mt-1 text-sm text-slate-600">Review previous scans and their AI-generated reports.</p>
@@ -109,8 +112,8 @@ export const Homepage = () => {
           {/* Model Insights - disabled until page is ready */}
           <div className="group block opacity-60 cursor-not-allowed">
             <div className="h-full min-h-44 bg-white rounded-2xl border-2 border-slate-200 p-6 text-center pointer-events-none">
-              <div className="mx-auto mb-4 w-14 h-14 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center">
-                <LightBulbIcon className="w-7 h-7" />
+              <div className="mx-auto mb-4 w-14 h-14 rounded-xl bg-slate-100 flex items-center justify-center p-2.5">
+                <img src={iconModelInsights} alt="" className={ICON_QUICK_DISABLED} />
               </div>
               <h3 className="text-lg font-semibold text-slate-500">Model Insights</h3>
               <p className="mt-1 text-sm text-slate-400">Coming soon.</p>

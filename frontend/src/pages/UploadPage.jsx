@@ -221,17 +221,22 @@ export const UploadPage = () => {
             <p className="mt-3 text-sm text-red-600">{error}</p>
           )}
 
-          <button
-            onClick={handlePredict}
-            disabled={!file || isLoading}
-            className={`mt-6 px-6 py-3 rounded-lg font-medium transition-colors ${
-              !file || isLoading
-                ? 'bg-slate-300 text-slate-500 cursor-not-allowed'
-                : 'bg-blue-600 text-white hover:bg-blue-700'
-            }`}
-          >
-            {isLoading ? 'Analyzing...' : 'Generate Results'}
-          </button>
+          <div className="mt-6 space-y-2">
+            <button
+              onClick={handlePredict}
+              disabled={!file || isLoading}
+              className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                !file || isLoading
+                  ? 'bg-slate-300 text-slate-500 cursor-not-allowed'
+                  : 'bg-blue-600 text-white hover:bg-blue-700'
+              }`}
+            >
+              {isLoading ? 'Analyzing...' : 'Generate Results'}
+            </button>
+            <p className="max-w-xl text-[11px] italic leading-relaxed text-slate-500">
+              First scan may take ~1 minute while model initializes.
+            </p>
+          </div>
 
           {result?.report && (
             <div className="mt-8 pt-6 border-t border-slate-200">

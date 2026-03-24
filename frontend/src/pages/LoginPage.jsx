@@ -1,5 +1,5 @@
 import React from 'react'
-import logo from '../assets/web_logo_temp.png'
+import logo from '../assets/chest-scanalyze-logo.png'
 import { useLoginPage } from '../pageLogic/LoginPageLogic'
 
 export const LoginPage = () => {
@@ -17,7 +17,7 @@ export const LoginPage = () => {
   } = useLoginPage()
 
   return (
-    <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-slate-900 p-6">
       {/* Title Section - Outside the box */}
       <div className="text-center mb-8">
         <h1 className="text-4xl font-bold text-white mb-3 tracking-tight">
@@ -29,7 +29,7 @@ export const LoginPage = () => {
       </div>
       
       <div className="w-full max-w-md">
-        <div className="bg-slate-900/90 backdrop-blur-sm rounded-2xl p-10 shadow-2xl border border-white">
+        <div className="rounded-2xl border border-white/25 bg-[#00083a] p-10 shadow-2xl">
           {/* Logo Section */}
           <div className="text-center mb-10">
             <img 
@@ -177,7 +177,7 @@ export const LoginPage = () => {
                   <div className="w-full border-t border-slate-600/40" />
                 </div>
                 <div className="relative flex justify-center">
-                  <span className="bg-slate-900/90 px-3 text-[11px] font-medium uppercase tracking-[0.2em] text-slate-500">
+                  <span className="bg-[#00083a] px-3 text-[11px] font-medium uppercase tracking-[0.2em] text-slate-500">
                     or
                   </span>
                 </div>

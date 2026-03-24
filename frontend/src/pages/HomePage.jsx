@@ -12,9 +12,9 @@ import iconDetailedReports from '../assets/home/icon-detailed-reports.png'
 /** Uniform black line-art; disabled tiles use ICON_QUICK_DISABLED. */
 const ICON_KEY = 'h-7 w-7 object-contain brightness-0'
 const ICON_QUICK = 'h-8 w-8 object-contain brightness-0'
-const ICON_QUICK_DISABLED = 'h-8 w-8 object-contain brightness-0 opacity-45'
+const ICON_QUICK_DISABLED = 'h-8 w-8 object-contain brightness-0 opacity-40'
 
-export const Homepage = () => {
+export const HomePage = () => {
   const navigate = useNavigate()
 
   const handleLogout = () => {
@@ -124,5 +124,3 @@ export const Homepage = () => {
     </div>
   )
 }
-
-

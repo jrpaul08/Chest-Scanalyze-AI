@@ -8,9 +8,12 @@ export const LoginPage = () => {
     formData,
     errors,
     isLoading,
+    isDemoLoading,
+    authBusy,
     handleChange,
     handleSubmit,
     toggleModeAndReset,
+    handleTryDemo,
   } = useLoginPage()
 
   return (
@@ -146,9 +149,9 @@ export const LoginPage = () => {
             
             <button 
               type="submit" 
-              disabled={isLoading}
+              disabled={authBusy}
               className={`w-full text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 mt-6 ${
-                isLoading 
+                authBusy 
                   ? 'bg-blue-600 cursor-not-allowed' 
                   : 'bg-blue-800 hover:bg-blue-700 hover:shadow-lg active:scale-[0.98]'
               }`}
@@ -163,6 +166,43 @@ export const LoginPage = () => {
               )}
             </button>
           </form>
+
+          {!isSignUp && (
+            <div className="mt-8">
+              <div className="relative mb-5">
+                <div
+                  className="absolute inset-0 flex items-center"
+                  aria-hidden="true"
+                >
+                  <div className="w-full border-t border-slate-600/40" />
+                </div>
+                <div className="relative flex justify-center">
+                  <span className="bg-slate-900/90 px-3 text-[11px] font-medium uppercase tracking-[0.2em] text-slate-500">
+                    or
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleTryDemo}
+                disabled={authBusy}
+                className={`w-full rounded-lg py-2.5 text-sm font-semibold transition-colors ${
+                  authBusy
+                    ? 'cursor-not-allowed text-[#7a6b45]/90'
+                    : 'text-[#c9a227] hover:bg-[#c9a227]/12 hover:text-[#dbb84a]'
+                }`}
+              >
+                {isDemoLoading ? (
+                  <span className="inline-flex items-center justify-center gap-2 text-[#c9a227]">
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#8a7a40]/60 border-t-[#dbb84a]" />
+                    Opening Demo…
+                  </span>
+                ) : (
+                  'Try Demo without signing in'
+                )}
+              </button>
+            </div>
+          )}
           
           {/* Toggle Link */}
           <div className="text-center mt-6">

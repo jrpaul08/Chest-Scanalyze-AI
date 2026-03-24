@@ -1,6 +1,12 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { API_BASE_URL } from '../config/api'
+import {
+  API_BASE_URL,
+  DEMO_USERNAME,
+  DEMO_PASSWORD,
+  loginWithPassword,
+  setAuthSession,
+} from '../config/api'
 
 export function useLoginPage() {
   const navigate = useNavigate()
@@ -14,6 +20,7 @@ export function useLoginPage() {
   })
   const [errors, setErrors] = useState({})
   const [isLoading, setIsLoading] = useState(false)
+  const [isDemoLoading, setIsDemoLoading] = useState(false)
 
   const handleChange = (e) => {
     setFormData({
@@ -96,15 +103,12 @@ export function useLoginPage() {
       }
     } else {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username: formData.username, password: formData.password }),
-        })
-        const data = await response.json()
+        const data = await loginWithPassword(
+          formData.username,
+          formData.password
+        )
         if (data.success) {
-          localStorage.setItem('token', data.token)
-          localStorage.setItem('user', JSON.stringify(data.user))
+          setAuthSession(data.token, data.user)
           navigate('/home')
         } else {
           alert(data.message || 'Login failed')
@@ -124,6 +128,26 @@ export function useLoginPage() {
     setErrors({})
   }
 
+  const handleTryDemo = async () => {
+    setIsDemoLoading(true)
+    try {
+      const data = await loginWithPassword(DEMO_USERNAME, DEMO_PASSWORD)
+      if (data.success) {
+        setAuthSession(data.token, data.user)
+        navigate('/upload')
+      } else {
+        alert(data.message || 'Demo login failed')
+      }
+    } catch (error) {
+      console.error('Demo login error:', error)
+      alert('Demo login failed. Please try again.')
+    } finally {
+      setIsDemoLoading(false)
+    }
+  }
+
+  const authBusy = isLoading || isDemoLoading
+
   return {
     isSignUp,
     setIsSignUp,
@@ -131,9 +155,12 @@ export function useLoginPage() {
     setFormData,
     errors,
     isLoading,
+    isDemoLoading,
+    authBusy,
     handleChange,
     handleSubmit,
     toggleModeAndReset,
+    handleTryDemo,
   }
 }
 

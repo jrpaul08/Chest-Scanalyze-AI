@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
-import { API_BASE_URL, getAuthHeaders } from '../config/api'
+import { API_BASE_URL, getAuthHeaders, isDemoUserSession } from '../config/api'
 
 export function useUploadPage() {
   const [file, setFile] = useState(null)
+  const [selectingSampleId, setSelectingSampleId] = useState(null)
   const [previewUrl, setPreviewUrl] = useState(null)
   const [isDragging, setIsDragging] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -56,6 +57,26 @@ export function useUploadPage() {
   const handleDragLeave = (e) => {
     e.preventDefault()
     setIsDragging(false)
+  }
+
+  const handleSelectSample = async (sample) => {
+    setSelectingSampleId(sample.id)
+    setError(null)
+    setResult(null)
+    setSaveSuccess(false)
+    try {
+      const res = await fetch(sample.src)
+      if (!res.ok) throw new Error('Could not load sample image')
+      const blob = await res.blob()
+      const type =
+        blob.type && blob.type.startsWith('image/') ? blob.type : 'image/png'
+      const f = new File([blob], sample.filename, { type })
+      setFile(f)
+    } catch (err) {
+      setError(err.message || 'Failed to load sample')
+    } finally {
+      setSelectingSampleId(null)
+    }
   }
 
   const handlePredict = async () => {
@@ -147,11 +168,14 @@ export function useUploadPage() {
     saveSuccess,
     error,
     result,
+    isDemoUser: isDemoUserSession(),
+    selectingSampleId,
     handleFileChange,
     handleDrop,
     handleDragOver,
     handleDragEnter,
     handleDragLeave,
+    handleSelectSample,
     handlePredict,
     handleSaveToLibrary,
     reset,

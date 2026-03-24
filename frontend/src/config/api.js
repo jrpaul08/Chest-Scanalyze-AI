@@ -35,3 +35,19 @@ export function logout() {
   localStorage.removeItem('token')
   localStorage.removeItem('user')
 }
+
+export function getStoredUser() {
+  try {
+    const raw = localStorage.getItem('user')
+    if (!raw) return null
+    return JSON.parse(raw)
+  } catch {
+    return null
+  }
+}
+
+/** True when the logged-in user is the shared demo account (Try Demo / demo_user). */
+export function isDemoUserSession() {
+  const u = getStoredUser()
+  return Boolean(u?.username && u.username === DEMO_USERNAME)
+}

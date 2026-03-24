@@ -18,7 +18,7 @@ You’ll create **two** Render services from this repo (monorepo):
 ## Prerequisites
 
 - Repo pushed to GitHub (or GitLab)
-- Azure model service URL (e.g. `https://your-model-app.azurecontainerapps.io`)
+- **Model inference:** Set `MODEL_SERVICE_URL` on the backend to your running inference API. In production that is typically **Azure Container Apps** (e.g. `https://your-model-app.azurecontainerapps.io`). Locally you can run **`docker pull jrpaul08/chest-xray-inference:v2`** then **`docker run -p 8000:8000 jrpaul08/chest-xray-inference:v2`** and use `http://localhost:8000`.
 - MongoDB URI (same one used locally)
 - JWT secret (strong random string for production)
 
@@ -77,6 +77,7 @@ In **Environment** → **Environment Variables**, add:
 | Key | Value |
 |-----|-------|
 | `VITE_API_URL` | Your backend Render URL (e.g. `https://chest-scanalyze-backend.onrender.com`) |
+
 
 **Important:** Vite bakes `VITE_API_URL` into the build. If you change it later, trigger a new deploy.
 

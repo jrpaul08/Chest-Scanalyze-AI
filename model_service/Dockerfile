@@ -1,3 +1,5 @@
+# Published image (Docker Hub): jrpaul08/chest-xray-inference:v2
+#
 # Base: Python 3.9 (matches MLflow model's python_version)
 FROM python:3.9-slim
 
